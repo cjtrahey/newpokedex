@@ -18,11 +18,10 @@ const fetchPokemon = () => {
 };
 
 const displayPokemon = (pokemon) => {
-    console.log(pokemon);
     const pokemonHTMLString = pokemon
         .map(
             (pokeman) => `
-        <li class="card">
+        <li class="card" data-id="${pokeman.id}">
             <img class="card-image" src="${pokeman.image}"/>
             <h2 class="card-title">${pokeman.id}. ${pokeman.name}</h2>
             <p class="card-subtitle">Type: ${pokeman.type}</p>
@@ -31,6 +30,43 @@ const displayPokemon = (pokemon) => {
         )
         .join('');
     pokedex.innerHTML = pokemonHTMLString;
+
+    // Add event listeners for each card
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+        card.addEventListener('click', (e) => {
+            const id = card.getAttribute('data-id');
+            const selectedPokemon = pokemon.find(p => p.id == id);
+            showModal(selectedPokemon);
+        });
+    });
+};
+
+const showModal = (pokemon) => {
+    const modal = document.getElementById("pokemonModal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalImage = document.getElementById("modalImage");
+    const modalType = document.getElementById("modalType");
+
+    modalTitle.innerText = `${pokemon.id}. ${pokemon.name}`;
+    modalImage.src = pokemon.image;
+    modalType.innerText = `Type: ${pokemon.type}`;
+
+    modal.style.display = "block";
+};
+
+// Close the modal when the close button is clicked
+const modal = document.getElementById("pokemonModal");
+const span = document.getElementsByClassName("close")[0];
+span.onclick = function() {
+    modal.style.display = "none";
+};
+
+// Close the modal when clicking outside of the modal content
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
 };
 
 fetchPokemon();
